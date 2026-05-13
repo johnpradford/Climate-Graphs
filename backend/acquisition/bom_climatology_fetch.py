@@ -27,7 +27,7 @@ class BOMClimatologyFetcher:
             station_id
         )
 
-        return await self.client.fetch(url)
+        return self.client.fetch(url)
 
     async def fetch_monthly_climatology(
         self,
