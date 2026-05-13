@@ -1,0 +1,17 @@
+font:
+  family: Montserrat
+
+sizes:
+  axis_title: 16
+  tick_labels: 16
+  legend: 14
+
+colours:
+  rainfall_lta: '#577A7A'
+  rainfall_survey: '#C7D3D3'
+  max_temp_lta: '#2E5D5D'
+  max_temp_survey: '#5D8A8A'
+  min_temp_lta: '#B8A63A'
+  min_temp_survey: '#D8C96A'
+
+background: '#ECECEC'
