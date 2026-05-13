@@ -1,11 +1,19 @@
 from dataclasses import dataclass
 import math
 
+import pandas as pd
+
 from backend.acquisition.bom_client import BOMClient
 from backend.acquisition.bom_table_parser import BOMTableParser
 from backend.acquisition.bom_url_builder import BOMUrlBuilder
+from backend.anomalies.rainfall_anomaly import (
+    RainfallAnomalyCalculator,
+)
 from backend.transformations.climatology_transformer import (
     ClimatologyTransformer,
+)
+from backend.validation.climatology_validator import (
+    ClimatologyValidator,
 )
 
 
@@ -78,6 +86,8 @@ class BOMClimatologyFetcher:
                 continue
 
         canonical_data = []
+        validation_results = {}
+        anomaly_data = []
 
         if parsed_tables:
 
@@ -88,7 +98,17 @@ class BOMClimatologyFetcher:
                 )
             )
 
-            records = canonical_table.to_dict(
+            validation_results = (
+                ClimatologyValidator
+                .validate(canonical_table)
+            )
+
+            anomaly_table = (
+                RainfallAnomalyCalculator
+                .rolling_rainfall(canonical_table)
+            )
+
+            records = anomaly_table.to_dict(
                 orient='records'
             )
 
@@ -101,8 +121,12 @@ class BOMClimatologyFetcher:
 
                 canonical_data.append(cleaned_row)
 
+            anomaly_data = canonical_data
+
         return {
             'station_id': request.station_id,
             'table_count': len(parsed_tables),
+            'validation': validation_results,
             'canonical_monthly_climatology': canonical_data,
+            'rainfall_anomalies': anomaly_data,
         }
