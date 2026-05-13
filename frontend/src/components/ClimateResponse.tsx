@@ -7,6 +7,8 @@ export default function ClimateResponse({ response }: Props) {
     return null
   }
 
+  const outputPath = response.summary?.output_path
+
   return (
     <section className="panel">
       <h2>Climate Summary Result</h2>
@@ -20,14 +22,12 @@ export default function ClimateResponse({ response }: Props) {
       </div>
 
       <div>
-        <strong>Status:</strong> {response.status}
+        <strong>Status:</strong> {response.status}</n>
       </div>
 
       <div>
         <strong>Generated Figure:</strong>
-        <pre>
-          {response.summary?.output_path}
-        </pre>
+        <pre>{outputPath}</pre>
       </div>
 
       <div>
