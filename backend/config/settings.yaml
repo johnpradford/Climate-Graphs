@@ -1,0 +1,28 @@
+baseline_period:
+  start_year: 1991
+  end_year: 2020
+
+plotting:
+  dpi: 600
+  width_inches: 10
+  height_inches: 6
+  background_colour: '#F3F3F3'
+
+fonts:
+  family: 'Montserrat'
+  axis_title_size: 16
+  tick_size: 16
+  legend_size: 14
+
+colours:
+  rainfall_bar: '#7E97A6'
+  rainfall_average: '#526370'
+  tmax_line: '#4F8C87'
+  tmin_line: '#8E9B6A'
+  survey_fill: '#DCEFD9'
+  survey_border: '#4D7A46'
+
+validation:
+  max_temperature: 60
+  min_temperature: -20
+  max_monthly_rainfall: 5000
