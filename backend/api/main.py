@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.api.routes.bom import router as bom_router
 from backend.api.routes.climate import router as climate_router
 from backend.api.routes.stations import router as stations_router
 
@@ -21,6 +22,7 @@ app.add_middleware(
 
 app.include_router(climate_router)
 app.include_router(stations_router)
+app.include_router(bom_router)
 
 
 @app.get('/')
