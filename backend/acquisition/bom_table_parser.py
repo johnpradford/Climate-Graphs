@@ -8,7 +8,7 @@ class BOMTableParser:
     @staticmethod
     def extract_tables(html: str):
 
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, 'html.parser')
 
         return pd.read_html(str(soup))
 
