@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from typing import Optional
 
 import pandas as pd
 
 from backend.acquisition.bom_client import BOMClient
+from backend.acquisition.bom_url_builder import BOMUrlBuilder
 
 
 @dataclass
@@ -19,15 +19,30 @@ class BOMClimatologyFetcher:
     def __init__(self):
         self.client = BOMClient()
 
+    async def fetch_raw_html(
+        self,
+        station_id: str,
+    ) -> str:
+        """Retrieve raw BOM climatology HTML."""
+
+        url = BOMUrlBuilder.monthly_climatology_url(
+            station_id
+        )
+
+        return await self.client.fetch(url)
+
     async def fetch_monthly_climatology(
         self,
         request: ClimatologyRequest
     ) -> pd.DataFrame:
         """
-        Temporary scaffold implementation.
-
-        Returns canonical monthly climatology structure.
+        Retrieve BOM climatology and return
+        canonical dataframe structure.
         """
+
+        html = await self.fetch_raw_html(
+            request.station_id
+        )
 
         months = list(range(1, 13))
 
@@ -39,4 +54,5 @@ class BOMClimatologyFetcher:
             'tmin_climatology': [0.0] * 12,
             'baseline_start': [request.baseline_start] * 12,
             'baseline_end': [request.baseline_end] * 12,
+            'html_length': [len(html)] * 12,
         })
