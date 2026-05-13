@@ -63,11 +63,22 @@ class BOMClimatologyFetcher:
             except Exception:
                 continue
 
+        serialised_tables = []
+
+        for table in parsed_tables:
+
+            cleaned = (
+                table
+                .head(12)
+                .where(table.notnull(), None)
+            )
+
+            serialised_tables.append(
+                cleaned.to_dict(orient='records')
+            )
+
         return {
             'station_id': request.station_id,
             'table_count': len(parsed_tables),
-            'tables': [
-                table.head(12).to_dict(orient='records')
-                for table in parsed_tables
-            ]
+            'tables': serialised_tables,
         }
