@@ -1,15 +1,12 @@
 import pandas as pd
 
+from backend.transformations.bom_row_classifier import (
+    BOMRowClassifier,
+)
+
 
 class ClimatologyTransformer:
     """Transform raw BOM climatology tables into canonical schema."""
-
-    VARIABLE_LOOKUP = {
-        1: 'tmax_c',
-        2: 'tmin_c',
-        4: 'rainfall_mm',
-        6: 'rain_days',
-    }
 
     MONTH_COLUMNS = [
         'Jan',
@@ -36,12 +33,17 @@ class ClimatologyTransformer:
             'month': list(range(1, 13)),
         })
 
-        for row_index, variable_name in cls.VARIABLE_LOOKUP.items():
+        for _, row in table.iterrows():
 
-            if row_index >= len(table):
+            statistics_label = row.get('Statistics')
+
+            variable_name = (
+                BOMRowClassifier
+                .classify_row(statistics_label)
+            )
+
+            if variable_name is None:
                 continue
-
-            row = table.iloc[row_index]
 
             values = []
 
