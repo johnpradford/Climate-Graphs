@@ -1,3 +1,5 @@
+from io import StringIO
+
 import pandas as pd
 from bs4 import BeautifulSoup
 
@@ -8,9 +10,29 @@ class BOMTableParser:
     @staticmethod
     def extract_tables(html: str):
 
-        soup = BeautifulSoup(html, 'html.parser')
+        soup = BeautifulSoup(
+            html,
+            'html.parser'
+        )
 
-        return pd.read_html(str(soup))
+        html_tables = soup.find_all('table')
+
+        parsed = []
+
+        for table in html_tables:
+
+            try:
+
+                parsed.extend(
+                    pd.read_html(
+                        StringIO(str(table))
+                    )
+                )
+
+            except Exception:
+                continue
+
+        return parsed
 
     @staticmethod
     def normalise_month_column(df: pd.DataFrame):
