@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import math
 
 from backend.acquisition.bom_client import BOMClient
 from backend.acquisition.bom_table_parser import BOMTableParser
@@ -28,6 +29,16 @@ class BOMClimatologyFetcher:
         )
 
         return self.client.fetch(url)
+
+    @staticmethod
+    def _clean_value(value):
+
+        if isinstance(value, float):
+
+            if math.isnan(value):
+                return None
+
+        return value
 
     async def fetch_monthly_climatology(
         self,
@@ -67,15 +78,22 @@ class BOMClimatologyFetcher:
 
         for table in parsed_tables:
 
-            cleaned = (
-                table
-                .head(12)
-                .where(table.notnull(), None)
+            records = table.head(12).to_dict(
+                orient='records'
             )
 
-            serialised_tables.append(
-                cleaned.to_dict(orient='records')
-            )
+            cleaned_records = []
+
+            for row in records:
+
+                cleaned_row = {}
+
+                for key, value in row.items():
+                    cleaned_row[key] = self._clean_value(value)
+
+                cleaned_records.append(cleaned_row)
+
+            serialised_tables.append(cleaned_records)
 
         return {
             'station_id': request.station_id,
