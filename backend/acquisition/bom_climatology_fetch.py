@@ -4,6 +4,9 @@ import math
 from backend.acquisition.bom_client import BOMClient
 from backend.acquisition.bom_table_parser import BOMTableParser
 from backend.acquisition.bom_url_builder import BOMUrlBuilder
+from backend.transformations.climatology_transformer import (
+    ClimatologyTransformer,
+)
 
 
 @dataclass
@@ -74,15 +77,20 @@ class BOMClimatologyFetcher:
             except Exception:
                 continue
 
-        serialised_tables = []
+        canonical_data = []
 
-        for table in parsed_tables:
+        if parsed_tables:
 
-            records = table.head(12).to_dict(
-                orient='records'
+            canonical_table = (
+                ClimatologyTransformer
+                .extract_canonical_monthly_data(
+                    parsed_tables[0]
+                )
             )
 
-            cleaned_records = []
+            records = canonical_table.to_dict(
+                orient='records'
+            )
 
             for row in records:
 
@@ -91,12 +99,10 @@ class BOMClimatologyFetcher:
                 for key, value in row.items():
                     cleaned_row[key] = self._clean_value(value)
 
-                cleaned_records.append(cleaned_row)
-
-            serialised_tables.append(cleaned_records)
+                canonical_data.append(cleaned_row)
 
         return {
             'station_id': request.station_id,
             'table_count': len(parsed_tables),
-            'tables': serialised_tables,
+            'canonical_monthly_climatology': canonical_data,
         }
