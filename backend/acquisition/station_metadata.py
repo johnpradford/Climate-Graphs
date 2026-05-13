@@ -14,6 +14,7 @@ MOCK_STATIONS = [
     StationMetadata('009021', 'Perth Metro', -31.9505, 115.8605, 15),
     StationMetadata('004032', 'Karratha Aero', -20.7122, 116.7738, 9),
     StationMetadata('012038', 'Albany Airport', -34.9439, 117.8089, 69),
+    StationMetadata('004003', 'Marble Bar', -21.1711, 119.7497, 179),
 ]
 
 
