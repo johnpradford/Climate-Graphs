@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pandas
+numpy
+matplotlib
+pydantic
+requests
+beautifulsoup4
+geopandas
+scipy
+pyyaml
+loguru
+openpyxl
+python-multipart
