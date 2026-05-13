@@ -18,7 +18,13 @@ export default function App() {
     try {
       const result = await generateClimateSummary(payload)
 
+      console.log(result)
+
       setResponse(result)
+    } catch (error) {
+      console.error(error)
+
+      alert('Backend request failed. Check backend terminal.')
     } finally {
       setLoading(false)
     }
