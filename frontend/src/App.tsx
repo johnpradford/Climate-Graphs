@@ -1,4 +1,10 @@
+import ClimateForm from './components/ClimateForm'
+
 export default function App() {
+  const handleRun = () => {
+    console.log('Generate climate summary')
+  }
+
   return (
     <main className="app-shell">
       <header>
@@ -8,13 +14,18 @@ export default function App() {
         </p>
       </header>
 
+      <ClimateForm onRun={handleRun} />
+
       <section className="panel">
         <h2>Project Status</h2>
+
         <ul>
-          <li>Vite frontend scaffolded</li>
-          <li>Python backend architecture defined</li>
-          <li>Climate plotting engine planned</li>
-          <li>BOM acquisition layer pending implementation</li>
+          <li>Frontend scaffold complete</li>
+          <li>FastAPI backend scaffold complete</li>
+          <li>Climate plotting engine scaffolded</li>
+          <li>Validation framework implemented</li>
+          <li>Month rotation logic implemented</li>
+          <li>Fallback station logic scaffolded</li>
         </ul>
       </section>
     </main>
