@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
-import pandas as pd
-
 from backend.acquisition.bom_client import BOMClient
+from backend.acquisition.bom_table_parser import BOMTableParser
 from backend.acquisition.bom_url_builder import BOMUrlBuilder
 
 
@@ -23,7 +22,6 @@ class BOMClimatologyFetcher:
         self,
         station_id: str,
     ) -> str:
-        """Retrieve raw BOM climatology HTML."""
 
         url = BOMUrlBuilder.monthly_climatology_url(
             station_id
@@ -34,25 +32,42 @@ class BOMClimatologyFetcher:
     async def fetch_monthly_climatology(
         self,
         request: ClimatologyRequest
-    ) -> pd.DataFrame:
-        """
-        Retrieve BOM climatology and return
-        canonical dataframe structure.
-        """
+    ) -> dict:
 
         html = await self.fetch_raw_html(
             request.station_id
         )
 
-        months = list(range(1, 13))
+        tables = BOMTableParser.extract_tables(
+            html
+        )
 
-        return pd.DataFrame({
-            'station_id': [request.station_id] * 12,
-            'month': months,
-            'rainfall_climatology': [0.0] * 12,
-            'tmax_climatology': [0.0] * 12,
-            'tmin_climatology': [0.0] * 12,
-            'baseline_start': [request.baseline_start] * 12,
-            'baseline_end': [request.baseline_end] * 12,
-            'html_length': [len(html)] * 12,
-        })
+        parsed_tables = []
+
+        for table in tables:
+
+            try:
+
+                normalised = (
+                    BOMTableParser
+                    .normalise_month_column(table)
+                )
+
+                cleaned = (
+                    BOMTableParser
+                    .coerce_numeric_columns(normalised)
+                )
+
+                parsed_tables.append(cleaned)
+
+            except Exception:
+                continue
+
+        return {
+            'station_id': request.station_id,
+            'table_count': len(parsed_tables),
+            'tables': [
+                table.head(12).to_dict(orient='records')
+                for table in parsed_tables
+            ]
+        }
