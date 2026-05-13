@@ -1,19 +1,27 @@
 import { useState } from 'react'
 
 import ClimateForm from './components/ClimateForm'
+import ClimateResponse from './components/ClimateResponse'
 import { generateClimateSummary } from './services/api'
 
 export default function App() {
   const [response, setResponse] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
 
   const handleRun = async (payload: {
     station: string
     survey_month: string
     survey_year: number
   }) => {
-    const result = await generateClimateSummary(payload)
+    setLoading(true)
 
-    setResponse(result)
+    try {
+      const result = await generateClimateSummary(payload)
+
+      setResponse(result)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -28,13 +36,13 @@ export default function App() {
 
       <ClimateForm onRun={handleRun} />
 
-      <section className="panel">
-        <h2>API Response</h2>
+      {loading && (
+        <section className="panel">
+          <p>Generating climate summary...</p>
+        </section>
+      )}
 
-        <pre>
-          {JSON.stringify(response, null, 2)}
-        </pre>
-      </section>
+      <ClimateResponse response={response} />
 
       <section className="panel">
         <h2>Project Status</h2>
@@ -44,9 +52,11 @@ export default function App() {
           <li>FastAPI backend scaffold complete</li>
           <li>Frontend-backend communication implemented</li>
           <li>Climate plotting engine scaffolded</li>
+          <li>Climate export workflow implemented</li>
           <li>Validation framework implemented</li>
           <li>Month rotation logic implemented</li>
           <li>Fallback station logic scaffolded</li>
+          <li>Logging and caching scaffolded</li>
         </ul>
       </section>
     </main>
