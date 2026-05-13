@@ -22,16 +22,18 @@ export default function ClimateResponse({ response }: Props) {
       </div>
 
       <div>
-        <strong>Status:</strong> {response.status}</n>
+        <strong>Status:</strong> {response.status}
       </div>
 
       <div>
         <strong>Generated Figure:</strong>
+
         <pre>{outputPath}</pre>
       </div>
 
       <div>
         <strong>Rotated Months:</strong>
+
         <pre>
           {JSON.stringify(response.rotated_months, null, 2)}
         </pre>
